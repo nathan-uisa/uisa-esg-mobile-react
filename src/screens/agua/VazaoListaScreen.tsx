@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { formatarDataHora, formatarNumero } from '../../agua/numeros';
-import { excedidas, numeroVazao, PONTOS, PROCESSO_VAZAO, type DadosVazao } from '../../agua/vazao';
+import { ehDadosVazao, excedidas, numeroVazao, PONTOS, PROCESSO_VAZAO, type DadosVazao } from '../../agua/vazao';
 import { useRegistros } from '../../services/processos';
 import { colors, radius, type } from '../../theme';
 import { Cartao, Entrada, Vazio } from '../../ui';
@@ -11,7 +11,7 @@ import { ListaProcesso } from './ListaProcesso';
 
 export default function VazaoListaScreen() {
   const nav = useNavigation();
-  const { registros, carregando, erro, recarregar } = useRegistros<DadosVazao>(PROCESSO_VAZAO);
+  const { registros, carregando, erro, recarregar } = useRegistros<DadosVazao>(PROCESSO_VAZAO, ehDadosVazao);
   const alertas = excedidas(registros);
   return (
     <ListaProcesso

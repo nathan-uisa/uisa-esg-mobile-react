@@ -4,7 +4,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { formatarData, formatarNumero, hojeIso, somarDias } from '../../agua/numeros';
 import {
-  calcular, faltasVazao, hidrometroRecente, montarVazao, numeroVazao, pontoPorId, PONTOS, PROCESSO_VAZAO, rascunhoVazio,
+  calcular, ehDadosVazao, faltasVazao, hidrometroRecente, montarVazao, numeroVazao, pontoPorId, PONTOS, PROCESSO_VAZAO, rascunhoVazio,
   type Calculo, type CampoErro, type DadosVazao, type Rascunho,
 } from '../../agua/vazao';
 import { useRegistros } from '../../services/processos';
@@ -17,7 +17,7 @@ type Props = NativeStackScreenProps<Rotas, 'VazaoNova'>;
 
 /** Nova leitura: um cartão por ponto outorgado. Volume e vazão saem da leitura anterior do mesmo hidrômetro. */
 export default function VazaoNovaScreen({ navigation }: Props) {
-  const { registros, carregando, erro: erroLista, doAparelho, recarregar, registrar } = useRegistros<DadosVazao>(PROCESSO_VAZAO);
+  const { registros, carregando, erro: erroLista, doAparelho, recarregar, registrar } = useRegistros<DadosVazao>(PROCESSO_VAZAO, ehDadosVazao);
   const semHistorico = Boolean(erroLista) && !doAparelho;
   const hoje = hojeIso();
   const [pontos, setPontos] = useState<Rascunho[]>(() => PONTOS.map((p) => rascunhoVazio(p.id, hoje)));

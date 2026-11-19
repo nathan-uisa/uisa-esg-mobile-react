@@ -70,6 +70,14 @@
           "faceIDPermission": "A biometria do aparelho permite entrar no app ESG sem digitar sua senha.",
           "configureAndroidBackup": true
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "O app ESG usa suas fotos para anexar evidências nos formulários.",
+          "cameraPermission": "O app ESG usa a câmera para tirar fotos de evidências nos formulários.",
+          "microphonePermission": false
+        }
       ]
     ],
     "extra": {

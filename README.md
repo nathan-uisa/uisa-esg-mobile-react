@@ -27,3 +27,4 @@ Outorgas**, com os dois processos de registro do portal: **Consumo de Água — 
 | 03 | [Arquitetura e dados](docs/03_ARQUITETURA.md) |
 | 04 | [Operação: APK, canais e OTA](docs/04_OPERACAO-OTA.md) |
 | 05 | [Decisões e pendências](docs/05_DECISOES-E-PENDENCIAS.md) |
+| 06 | [Formulários do portal no app](docs/06_FORMULARIOS.md) |

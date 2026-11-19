@@ -22,7 +22,7 @@ const semServidor = (e: unknown) => !(e instanceof ApiError) || e.status === 0 |
  * (`cacheRegistros.ts`) e `doAparelho` fica verdadeiro. Um envio por vez e uma `chaveEnvio` por envio: se a rede cair no meio e a pessoa tocar de novo com
  * os mesmos dados, vai a mesma chave e o servidor devolve o que já tinha gravado (não duplica).
  */
-export function useRegistros<D>(processo: string) {
+export function useRegistros<D>(processo: string, valido?: (dados: unknown) => boolean) {
   const [registros, setRegistros] = useState<Registro<D>[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState('');
@@ -35,14 +35,15 @@ export function useRegistros<D>(processo: string) {
     setErro('');
     try {
       const r = await request<{ registros?: Registro<D>[] }>(`/processos/${encodeURIComponent(processo)}/registros`);
-      const lista = Array.isArray(r.registros) ? r.registros : [];
+      // Registro de outro formato (ex.: feito pelo formulário cadastrado no portal) fica de fora: as contas não o entendem.
+      const lista = (Array.isArray(r.registros) ? r.registros : []).filter((x) => !valido || valido(x.dados));
       setRegistros(lista);
       setDoAparelho(false);
       void salvarCache(processo, lista);
     } catch (e) {
       const copia = semServidor(e) ? await lerCache<Registro<D>>(processo) : null;
       if (copia) {
-        setRegistros(copia.registros);
+        setRegistros(copia.registros.filter((x) => !valido || valido(x.dados)));
         setDoAparelho(true);
         setErro(`Sem conexão com o servidor. Mostrando o que este aparelho guardou dos últimos ${DIAS_NO_APARELHO} dias (atualizado em ${formatarDataHora(copia.guardadoEm)}).`);
       } else {

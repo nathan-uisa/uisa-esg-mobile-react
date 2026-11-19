@@ -14,7 +14,8 @@ import { PontosPin, TecladoPin } from '../ui/TecladoPin';
 /**
  * Tela de bloqueio (5 min sem uso ou app reaberto depois disso), por cima de tudo: o que estava aberto continua
  * por baixo. Sem internet, volta pela trava do aparelho (digital, rosto, PIN do Android) ou pelo PIN do app.
- * Com internet, também pela senha. "Sair" encerra a sessão e descarta o que estava aberto.
+ * Com internet, também pela senha. Nada é pedido sozinho: a tela abre com as opções, porque quem pegou o celular pode
+ * ser outra pessoa. "Entrar com outra conta" encerra a sessão, descarta o que estava aberto e volta ao login.
  */
 export function BloqueioScreen() {
   const { usuario, desbloquear, temPin, login, logout } = useSessao();
@@ -38,10 +39,8 @@ export function BloqueioScreen() {
     void (async () => {
       const tem = await travaDoAparelho();
       setTrava({ tem, digital: tem && (await biometriaCadastrada()) });
-      if (tem) void tentarAparelho(); // já abre pedindo a digital: é o caminho mais rápido
-      else if (temPin) setModo('pin');
     })();
-  }, [tentarAparelho, temPin]);
+  }, []);
 
   async function confirmarPin(valor = pin) {
     if (valor.length < PIN_MIN) return;
@@ -73,7 +72,7 @@ export function BloqueioScreen() {
           <Entrada style={s.topo}>
             <View style={s.avatar}><Text style={[s.inicial, t.titulo]}>{primeiro.charAt(0).toUpperCase()}</Text></View>
             <Text style={[s.ola, t.titulo]} accessibilityRole="header">Olá, {primeiro}</Text>
-            <Text style={[s.explica, t.corpo]}>O app foi bloqueado depois de {MINUTOS_SEM_USO} minutos sem uso. O que você estava fazendo continua aberto.</Text>
+            <Text style={[s.explica, t.corpo]}>O app foi bloqueado depois de {MINUTOS_SEM_USO} minutos sem uso. Escolha como continuar: o que você estava fazendo continua aberto.</Text>
           </Entrada>
 
           {modo === 'pin' ? (
@@ -93,22 +92,32 @@ export function BloqueioScreen() {
             </Entrada>
           ) : (
             <Entrada style={s.bloco}>
-              {trava === null ? <ActivityIndicator color={colors.white} /> : null}
-              {trava?.tem ? <Botao tom="principal" rotulo={trava.digital ? 'Usar a digital' : 'Usar a trava do aparelho'} icone={trava.digital ? 'finger-print' : 'phone-portrait-outline'} aoTocar={tentarAparelho} /> : null}
+              {trava === null ? <ActivityIndicator color={colors.white} /> : (
+                <>
+                  {trava.tem ? <Botao tom="principal" rotulo={trava.digital ? 'Usar a digital' : 'Usar a trava do aparelho'} icone={trava.digital ? 'finger-print' : 'phone-portrait-outline'} aoTocar={tentarAparelho} /> : null}
+                  {temPin ? <Botao tom={trava.tem ? 'vidro' : 'principal'} rotulo="Usar o PIN do app" icone="keypad-outline" aoTocar={() => { setModo('pin'); setErroPin(''); }} /> : null}
+                  <Botao tom={trava.tem || temPin ? 'vidro' : 'principal'} rotulo="Usar a senha" icone="lock-closed-outline" aoTocar={() => setModo('senha')} />
+                </>
+              )}
             </Entrada>
           )}
 
-          <View style={s.outros}>
-            {modo !== 'inicio' && trava?.tem ? <Opcao icone={trava.digital ? 'finger-print' : 'phone-portrait-outline'} texto={trava.digital ? 'Digital' : 'Trava do aparelho'} aoTocar={() => { setModo('inicio'); void tentarAparelho(); }} /> : null}
+          {modo !== 'inicio' ? <View style={s.outros}>
+            {trava?.tem ? <Opcao icone={trava.digital ? 'finger-print' : 'phone-portrait-outline'} texto={trava.digital ? 'Digital' : 'Trava do aparelho'} aoTocar={() => { setModo('inicio'); void tentarAparelho(); }} /> : null}
             {modo !== 'pin' && temPin ? <Opcao icone="keypad-outline" texto="PIN do app" aoTocar={() => { setModo('pin'); setErroPin(''); }} /> : null}
             {modo !== 'senha' ? <Opcao icone="lock-closed-outline" texto="Senha" aoTocar={() => setModo('senha')} /> : null}
-          </View>
+          </View> : null}
           {!trava?.tem && !temPin && modo !== 'senha' ? <Text style={s.dica}>Defina um PIN no Perfil para destravar sem internet. Sem ele, use a senha.</Text> : null}
           {temPin ? <Text style={s.miudo}>O PIN aceita {TENTATIVAS_PIN} erros seguidos.</Text> : null}
 
-          <Pressable accessibilityRole="button" onPress={() => Alert.alert('Sair da conta?', 'O que estava aberto será descartado e o PIN deste aparelho apagado.', [{ text: 'Cancelar', style: 'cancel' }, { text: 'Sair', style: 'destructive', onPress: () => void logout() }])} style={s.sair}>
-            <Text style={s.sairTexto}>Não é {primeiro}? Sair da conta</Text>
-          </Pressable>
+          <View style={s.sair}>
+            <Text style={s.dica}>Não é {primeiro}?</Text>
+            <Botao tom="vidro" pequeno icone="people-outline" rotulo="Entrar com outra conta" aoTocar={() => Alert.alert(
+              'Entrar com outra conta?',
+              `A sessão de ${primeiro} será encerrada neste celular. O que estava aberto, o PIN e as leituras guardadas no aparelho serão apagados.`,
+              [{ text: 'Cancelar', style: 'cancel' }, { text: 'Trocar de conta', style: 'destructive', onPress: () => void logout() }],
+            )} />
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
@@ -138,7 +147,6 @@ const s = StyleSheet.create({
   outros: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10 },
   opcao: { flexDirection: 'row', alignItems: 'center', gap: 8, height: 44, paddingHorizontal: 16, borderRadius: radius.pill, backgroundColor: colors.glass, borderWidth: 1, borderColor: colors.glassBorder },
   opcaoTexto: { color: colors.white, fontSize: 14.5, fontWeight: '600' },
-  sair: { alignSelf: 'center', minHeight: 44, justifyContent: 'center', marginTop: 'auto' },
-  sairTexto: { color: colors.onDarkMuted, fontSize: 14, textDecorationLine: 'underline' },
+  sair: { alignSelf: 'center', alignItems: 'center', gap: 8, marginTop: 'auto' },
   ondaFundo: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 50 },
 });

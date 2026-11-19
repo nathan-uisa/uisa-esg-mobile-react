@@ -22,7 +22,8 @@ export async function tokenAtual() {
 }
 
 export class ApiError extends Error {
-  constructor(public status: number, message: string, public codigo?: string) {
+  /** `erros`: erro por campo dos formulários cadastrados (`campo` ou `grade.linha.coluna`). */
+  constructor(public status: number, message: string, public codigo?: string, public erros: Record<string, string> = {}) {
     super(message);
   }
 }
@@ -32,7 +33,8 @@ function lerErro(corpo: any, status: number): ApiError {
   const interno = corpo?.message && typeof corpo.message === 'object' ? corpo.message : corpo;
   const lista = Array.isArray(corpo?.message) ? corpo.message.join(' · ') : undefined;
   const mensagem = interno?.mensagem ?? lista ?? (typeof corpo?.message === 'string' ? corpo.message : undefined) ?? corpo?.error;
-  return new ApiError(status, mensagem ? String(mensagem) : `O servidor respondeu ${status}.`, interno?.codigoErro);
+  const erros = interno?.erros && typeof interno.erros === 'object' ? (interno.erros as Record<string, string>) : {};
+  return new ApiError(status, mensagem ? String(mensagem) : `O servidor respondeu ${status}.`, interno?.codigoErro, erros);
 }
 
 type Opcoes = { method?: 'GET' | 'POST' | 'PUT' | 'DELETE'; body?: unknown; timeoutMs?: number; anonimo?: boolean };

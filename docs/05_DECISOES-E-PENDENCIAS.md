@@ -12,6 +12,8 @@
   - a **digital no login** usa a credencial do servidor (30 dias), que funciona mesmo depois de a sessão de 8 h vencer.
 - **Leituras dos últimos 30 dias no aparelho** (19/11/2026, pedido): sem internet as listas e a leitura anterior da
   Vazão continuam aparecendo. Mais de 30 dias sai só do aparelho. Detalhe no doc 03.
+- **Formulários do portal no app** (19/11/2026, pedido): a definição vem do portal como dado e troca sozinha quando
+  sai versão nova (doc 06). O PIPAS passou a ser o formulário; a Vazão troca sozinha quando for publicada.
 - **Sem segundo plano nem fila offline:** o app só registra com internet. Se a captação no campo ficar sem sinal,
   falta portar a fila (`outbox`) do Safety.
 - **Sem calendário nativo:** a data usa setas e Hoje/Ontem, sem dependência a mais.
@@ -25,3 +27,8 @@
 - [ ] Decidir se os registros feitos no campo precisam funcionar sem internet (fila offline).
 - [ ] Pontos de captação e hidrômetros estão fixos no código (como no portal). Quando houver tabela de referência no
       portal, ler de lá.
+- [ ] Testar no aparelho (APK 1.0.1, que já leva câmera e galeria): abrir o PIPAS pelo formulário, enviar, ver no
+      portal; publicar uma versão com campo novo e conferir que o app troca sozinho.
+- [ ] Registros de PIPAS gravados pelo app antes de 19/11/2026 ficaram sem versão de formulário e não aparecem na lista
+      do portal: conferir no banco e vincular à versão vigente, se houver.
+- [ ] Agir nas etapas seguintes pelo app (assumir, aprovar, devolver).

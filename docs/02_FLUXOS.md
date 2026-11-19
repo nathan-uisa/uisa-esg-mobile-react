@@ -22,15 +22,18 @@
 
 - **Quando bloqueia:** depois de **5 minutos sem uso**, ou ao reabrir o app depois disso. Uma tela cobre tudo, e o que
   estava aberto continua por baixo.
+- **A tela não pede nada sozinha** (19/11/2026): ela abre com as opções, porque quem pegou o celular pode ser outra
+  pessoa. A primeira opção disponível fica em laranja.
 - **Como volta:**
-  - pela **trava do aparelho** (digital, rosto, PIN ou padrão do Android), que o app já pede ao bloquear;
+  - pela **trava do aparelho** (digital, rosto, PIN ou padrão do Android);
   - pelo **PIN do app** (4 a 8 números);
   - pela **senha**, que exige internet.
 - **Regras do PIN:**
   - fica só no aparelho, guardado como resumo SHA-256 com sal;
   - PINs óbvios (repetidos ou em sequência) são recusados;
   - **5 erros** apagam o PIN, e aí só a senha devolve o acesso.
-- **Sair da conta:** apaga o PIN e descarta o que estava aberto.
+- **Entrar com outra conta** ("Não é Fulano?"): depois de confirmar, encerra a sessão, apaga o PIN e as leituras
+  guardadas, descarta o que estava aberto e volta ao login.
 
 ## Água e Outorgas
 

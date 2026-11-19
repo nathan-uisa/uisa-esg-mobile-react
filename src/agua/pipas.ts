@@ -15,6 +15,8 @@ export type DadosPipas = { prefixo: string; abastecimentos: Abastecimento[] };
 export type LinhaPipas = { chave: string; data: string; local: string; volume: string; codigo: Codigo | '' };
 
 export const numeroPipas = (n: number) => `PIPAS-${String(n).padStart(4, '0')}`;
+/** Formato que as contas do app entendem (o formulário cadastrado do PIPAS grava no mesmo formato). */
+export const ehDadosPipas = (d: unknown): d is DadosPipas => Boolean(d && typeof d === 'object' && Array.isArray((d as DadosPipas).abastecimentos));
 export const totalPipas = (d: DadosPipas) => d.abastecimentos.reduce((s, a) => s + a.volume, 0);
 
 let seq = 0;

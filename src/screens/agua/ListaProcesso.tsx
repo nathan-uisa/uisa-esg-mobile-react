@@ -8,7 +8,7 @@ import { Aviso, Botao, BotaoRedondo, Carregando, Entrada, PainelFoto, useTipogra
 /** Molde das listas de processo: foto com título, números do processo, a lista e o botão laranja de novo registro. */
 export function ListaProcesso({ foto, titulo, descricao, numeros, carregando, erro, aoAtualizar, rotuloNovo, aoNovo, children, vazio }: {
   foto: ImageSourcePropType; titulo: string; descricao: string; numeros: { valor: string; rotulo: string; alerta?: boolean }[];
-  carregando: boolean; erro: string; aoAtualizar: () => void; rotuloNovo: string; aoNovo: () => void; children: React.ReactNode; vazio: boolean;
+  carregando: boolean; erro: string; aoAtualizar: () => void; rotuloNovo?: string; aoNovo?: () => void; children: React.ReactNode; vazio: boolean;
 }) {
   const nav = useNavigation();
   const t = useTipografia();
@@ -39,9 +39,11 @@ export function ListaProcesso({ foto, titulo, descricao, numeros, carregando, er
           {carregando && vazio ? <Carregando texto="Buscando os registros…" /> : children}
         </View>
       </ScrollView>
-      <View style={[s.rodape, { paddingBottom: insets.bottom + 14 }]} pointerEvents="box-none">
-        <Botao tom="principal" icone="add" rotulo={rotuloNovo} aoTocar={aoNovo} />
-      </View>
+      {rotuloNovo && aoNovo ? (
+        <View style={[s.rodape, { paddingBottom: insets.bottom + 14 }]} pointerEvents="box-none">
+          <Botao tom="principal" icone="add" rotulo={rotuloNovo} aoTocar={aoNovo} />
+        </View>
+      ) : null}
     </View>
   );
 }

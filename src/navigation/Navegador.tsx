@@ -16,19 +16,20 @@ import InicioScreen from '../screens/InicioScreen';
 import PerfilScreen from '../screens/PerfilScreen';
 import DefinirPinScreen from '../screens/DefinirPinScreen';
 import AguaScreen from '../screens/agua/AguaScreen';
-import PipasListaScreen from '../screens/agua/PipasListaScreen';
-import PipasNovoScreen from '../screens/agua/PipasNovoScreen';
-import PipasFichaScreen from '../screens/agua/PipasFichaScreen';
 import VazaoListaScreen from '../screens/agua/VazaoListaScreen';
 import VazaoNovaScreen from '../screens/agua/VazaoNovaScreen';
 import VazaoFichaScreen from '../screens/agua/VazaoFichaScreen';
+import FormulariosScreen from '../screens/formularios/FormulariosScreen';
+import FormularioListaScreen from '../screens/formularios/FormularioListaScreen';
+import FormularioNovoScreen from '../screens/formularios/FormularioNovoScreen';
+import FormularioFichaScreen from '../screens/formularios/FormularioFichaScreen';
 
 const Pilha = createNativeStackNavigator<Rotas>();
 export const navegacao = createNavigationContainerRef<Rotas>();
 
 const tema = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: colors.bg, primary: colors.primary } };
 /** Telas com foto/painel escuro no topo: ícones brancos na barra de status. */
-const TOPO_ESCURO = new Set(['Login', 'PrimeiroAcesso', 'Inicio', 'Perfil', 'Agua', 'PipasLista', 'VazaoLista']);
+const TOPO_ESCURO = new Set(['Login', 'PrimeiroAcesso', 'Inicio', 'Perfil', 'Agua', 'VazaoLista', 'FormularioLista']);
 const COM_ABAS = new Set(['Inicio', 'Perfil']);
 
 export default function Navegador() {
@@ -65,14 +66,16 @@ export default function Navegador() {
             {pode('agua.view') ? (
               <Pilha.Group>
                 <Pilha.Screen name="Agua" component={AguaScreen} />
-                <Pilha.Screen name="PipasLista" component={PipasListaScreen} />
-                <Pilha.Screen name="PipasNovo" component={PipasNovoScreen} />
-                <Pilha.Screen name="PipasFicha" component={PipasFichaScreen} />
                 <Pilha.Screen name="VazaoLista" component={VazaoListaScreen} />
                 <Pilha.Screen name="VazaoNova" component={VazaoNovaScreen} />
                 <Pilha.Screen name="VazaoFicha" component={VazaoFichaScreen} />
               </Pilha.Group>
             ) : null}
+            {/* Quem vê cada formulário é o próprio formulário (acesso no portal), não o papel do módulo. */}
+            <Pilha.Screen name="Formularios" component={FormulariosScreen} />
+            <Pilha.Screen name="FormularioLista" component={FormularioListaScreen} />
+            <Pilha.Screen name="FormularioNovo" component={FormularioNovoScreen} />
+            <Pilha.Screen name="FormularioFicha" component={FormularioFichaScreen} />
           </>
         ) : (
           <>

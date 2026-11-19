@@ -4,8 +4,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { dataPorExtenso, formatarNumero, saudacao } from '../agua/numeros';
-import { PROCESSO_PIPAS, resumoPipas, type DadosPipas } from '../agua/pipas';
-import { excedidas, PROCESSO_VAZAO, type DadosVazao } from '../agua/vazao';
+import { ehDadosPipas, PROCESSO_PIPAS, resumoPipas, type DadosPipas } from '../agua/pipas';
+import { ehDadosVazao, excedidas, PROCESSO_VAZAO, type DadosVazao } from '../agua/vazao';
+import { useMenuFormularios } from '../services/formularios';
 import { useRegistros } from '../services/processos';
 import { useSessao } from '../services/sessao';
 import { colors, gradients, radius, shadow, type } from '../theme';
@@ -39,10 +40,7 @@ export default function InicioScreen() {
         {pode('agua.view') ? <CartaoAgua /> : (
           <Vazio icone="lock-closed-outline" titulo="Nenhum módulo liberado" texto="Seu papel ainda não tem acesso a Água e Outorgas. Peça a liberação a quem administra os acessos no portal ESG." />
         )}
-        <View style={s.embreve}>
-          <Ionicons name="leaf-outline" size={18} color={colors.greenInk} accessible={false} />
-          <Text style={[type.caption, s.embreveTexto]}>Outros módulos do portal ESG chegam ao app aos poucos, por atualização.</Text>
-        </View>
+        <CartaoFormularios />
       </View>
     </ScrollView>
   );
@@ -51,8 +49,8 @@ export default function InicioScreen() {
 function CartaoAgua() {
   const nav = useNavigation();
   const t = useTipografia();
-  const pipas = useRegistros<DadosPipas>(PROCESSO_PIPAS);
-  const vazao = useRegistros<DadosVazao>(PROCESSO_VAZAO);
+  const pipas = useRegistros<DadosPipas>(PROCESSO_PIPAS, ehDadosPipas);
+  const vazao = useRegistros<DadosVazao>(PROCESSO_VAZAO, ehDadosVazao);
   const r = resumoPipas(pipas.registros);
   const alertas = excedidas(vazao.registros);
   return (
@@ -80,6 +78,25 @@ function CartaoAgua() {
             <Text style={s.numeroRotulo}>{alertas === 1 ? 'leitura acima da outorga' : 'leituras acima da outorga'}</Text>
           </View>
         </View>
+      </Pressable>
+    </Entrada>
+  );
+}
+
+/** Formulários do portal: um formulário publicado lá aparece aqui sem atualizar o app. */
+function CartaoFormularios() {
+  const nav = useNavigation();
+  const menu = useMenuFormularios();
+  const n = menu?.itens.length ?? 0;
+  return (
+    <Entrada ordem={2}>
+      <Pressable accessibilityRole="button" accessibilityLabel="Abrir os formulários do portal" onPress={() => nav.navigate('Formularios')} style={({ pressed }) => [s.embreve, pressed && s.pressionado]}>
+        <Ionicons name="document-text-outline" size={22} color={colors.greenInk} accessible={false} />
+        <View style={{ flex: 1 }}>
+          <Text style={[type.bodyStrong, { color: colors.greenInk }]}>Formulários do portal</Text>
+          <Text style={[type.caption, s.embreveTexto]}>{menu ? `${n} ${n === 1 ? 'formulário disponível' : 'formulários disponíveis'} · versão nova chega sozinha` : 'Publicados no portal, chegam aqui sem atualizar o app.'}</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={20} color={colors.greenInk} accessible={false} />
       </Pressable>
     </Entrada>
   );

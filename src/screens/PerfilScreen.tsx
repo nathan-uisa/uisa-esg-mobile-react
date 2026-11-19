@@ -6,7 +6,9 @@ import { useNavigation } from '@react-navigation/native';
 import { expo } from '../../app.json';
 import { nomeDoAmbiente, useAmbiente } from '../services/ambiente';
 import { apagarPin, travaDoAparelho } from '../services/desbloqueio';
+import { sincronizarFormularios, useMenuFormularios } from '../services/formularios';
 import { useSessao } from '../services/sessao';
+import { formatarDataHora } from '../agua/numeros';
 import { colors, radius, shadow, type } from '../theme';
 import { Cartao, Entrada, PainelFoto, Secao, useTipografia, type Icone } from '../ui';
 
@@ -76,6 +78,7 @@ export default function PerfilScreen() {
           <Cartao>
             <Linha icone="cloud-download-outline" titulo="Atualizações" texto={`Versão ${Application.nativeApplicationVersion ?? expo.version} · servidor ${nomeDoAmbiente(ambiente)}`}
               aoTocar={() => nav.navigate('Atualizacoes')} direita={<Ionicons name="chevron-forward" size={20} color={colors.textDim} />} />
+            <AtualizarFormularios />
           </Cartao>
         </Entrada>
 
@@ -104,6 +107,28 @@ function Linha({ icone, titulo, texto, direita, aoTocar }: { icone: Icone; titul
     </View>
   );
   return aoTocar ? <Pressable accessibilityRole="button" accessibilityLabel={titulo} onPress={aoTocar} style={({ pressed }) => pressed && { opacity: 0.8 }}>{conteudo}</Pressable> : conteudo;
+}
+
+/**
+ * Formulários do portal: o app troca sozinho quando sai versão nova (ao abrir e ao voltar ao app); aqui a pessoa
+ * força a conferência na hora (docs/06_FORMULARIOS.md).
+ */
+function AtualizarFormularios() {
+  const menu = useMenuFormularios();
+  const [ocupado, setOcupado] = useState(false);
+  async function atualizar() {
+    setOcupado(true);
+    const r = await sincronizarFormularios(true);
+    setOcupado(false);
+    Alert.alert('Formulários', r.erro ? `${r.erro}
+
+O app continua com os formulários guardados.` : r.atualizados.length ? `Versão nova baixada: ${r.atualizados.join(', ')}.` : `Os ${r.total} formulários já estavam na versão mais nova.`);
+  }
+  return (
+    <Linha icone="document-text-outline" titulo="Atualizar formulários"
+      texto={menu ? `${menu.itens.length} no aparelho · conferidos em ${formatarDataHora(menu.atualizadoEm)}` : 'Ainda não baixados'}
+      aoTocar={() => void atualizar()} direita={ocupado ? <ActivityIndicator color={colors.primary} /> : <Ionicons name="refresh" size={20} color={colors.textDim} />} />
+  );
 }
 
 const s = StyleSheet.create({

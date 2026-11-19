@@ -6,6 +6,7 @@ import { salvarAmbiente, type Ambiente } from './ambiente';
 import { apagarBiometriaLocal, ativarDigital as ativarNoServidor, desativarDigital as desativarNoServidor, digitalDisponivel, entrarComDigital, lerBiometria } from './biometria';
 import { apagarPin, temPin as haPin } from './desbloqueio';
 import { apagarCaches } from './cacheRegistros';
+import { apagarFormularios } from './formularios';
 import { expirouNaAbertura, marcarAtividade, observarInatividade } from './inatividade';
 
 /** Usuário como o backend devolve em /auth/login e /auth/me. */
@@ -94,6 +95,7 @@ export function SessaoProvider({ children }: { children: React.ReactNode }) {
     await AsyncStorage.removeItem(USUARIO);
     await apagarPin();
     await apagarCaches();
+    await apagarFormularios();
     setGeracao((g) => g + 1);
     setBloqueado(false);
     setUsuario(null);
@@ -192,6 +194,7 @@ export function SessaoProvider({ children }: { children: React.ReactNode }) {
     await AsyncStorage.removeItem(USUARIO);
     await apagarBiometriaLocal();
     await apagarCaches();
+    await apagarFormularios();
     await salvarAmbiente(novo);
     setUsuario(null);
     await atualizarAcessoRapido();

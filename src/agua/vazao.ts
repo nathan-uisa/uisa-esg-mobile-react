@@ -8,6 +8,8 @@ import { hojeIso, lerNumero } from './numeros';
  * leituras. Vazão acima do limite da outorga exige análise de causa, ação corretiva e responsável.
  */
 export const PROCESSO_VAZAO = 'vazao-agua-industrial';
+/** Formato da tela fixa da Vazão (o formulário cadastrado, quando publicado, tem outro e fica de fora destas contas). */
+export const ehDadosVazao = (d: unknown): d is DadosVazao => Boolean(d && typeof d === 'object' && Array.isArray((d as DadosVazao).leituras));
 
 export type PontoId = 'rio-angelim' | 'sao-lourenco-b01' | 'sao-lourenco-b02';
 export type Ponto = { id: PontoId; nome: string; curto: string; limite: number; hidrometros: string[] };

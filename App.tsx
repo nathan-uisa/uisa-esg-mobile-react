@@ -6,6 +6,7 @@ import Navegador from './src/navigation/Navegador';
 import { BloqueioScreen } from './src/screens/BloqueioScreen';
 import { iniciarAtualizacoes } from './src/services/atualizacoes';
 import { FontesProvider, useFontes } from './src/services/fontes';
+import { iniciarSincronizacaoFormularios } from './src/services/formularios';
 import { marcarAtividade } from './src/services/inatividade';
 import { SessaoProvider, useSessao } from './src/services/sessao';
 
@@ -15,6 +16,9 @@ function Raiz() {
   const { pronto, usuario, bloqueado, geracao } = useSessao();
   const fontes = useFontes();
   useEffect(() => { if (pronto && fontes.prontas) SplashScreen.hideAsync().catch(() => undefined); }, [pronto, fontes.prontas]);
+  // Definições dos formulários do portal: confere as versões ao entrar e ao voltar ao app (no máximo a cada 5 min).
+  const logado = Boolean(usuario);
+  useEffect(() => (logado ? iniciarSincronizacaoFormularios() : undefined), [logado, geracao]);
   if (!pronto || !fontes.prontas) return null;
   // Todo toque conta como uso (bloqueio por inatividade); a captura não rouba o toque. `key={geracao}`: outra pessoa
   // entrando descarta as telas da anterior; o desbloqueio da mesma pessoa mantém tudo montado por baixo.

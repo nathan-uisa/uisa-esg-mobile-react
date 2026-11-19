@@ -12,3 +12,8 @@ Leia o [README](README.md) e os documentos de `docs/` antes de alterar um fluxo.
 - **Estados diferentes:** código alterado, pacote gerado, OTA publicada, OTA aplicada e APK instalado são coisas
   distintas. Não registre validação simulada como teste no aparelho.
 - Atualize a documentação quando mudar design, navegação, regras ou contratos.
+
+## Formulários do portal (docs/06)
+
+- `src/formularios/motor/` é CÓPIA do backend: não edite aqui. Mudou lá? `npm run motor:copiar` (o `verify:tudo` falha se divergir).
+- Campo, regra, cálculo e formulário novo chegam como dado (sem OTA). Só motor novo ou foto própria pedem OTA.

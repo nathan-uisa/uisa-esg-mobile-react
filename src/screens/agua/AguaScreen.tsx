@@ -3,8 +3,9 @@ import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'r
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { formatarData, formatarNumero } from '../../agua/numeros';
-import { PROCESSO_PIPAS, resumoPipas, type DadosPipas } from '../../agua/pipas';
-import { excedidas, PROCESSO_VAZAO, ultimasVazoes, type DadosVazao } from '../../agua/vazao';
+import { ehDadosPipas, PROCESSO_PIPAS, resumoPipas, type DadosPipas } from '../../agua/pipas';
+import { ehDadosVazao, excedidas, PROCESSO_VAZAO, ultimasVazoes, type DadosVazao } from '../../agua/vazao';
+import { useMenuFormularios } from '../../services/formularios';
 import { useRegistros } from '../../services/processos';
 import { colors, radius, shadow, type } from '../../theme';
 import { Aviso, BotaoRedondo, Cartao, Entrada, Nivel, PainelFoto, Secao, useTipografia } from '../../ui';
@@ -13,12 +14,18 @@ import { Aviso, BotaoRedondo, Cartao, Entrada, Nivel, PainelFoto, Secao, useTipo
 export default function AguaScreen() {
   const nav = useNavigation();
   const t = useTipografia();
-  const pipas = useRegistros<DadosPipas>(PROCESSO_PIPAS);
-  const vazao = useRegistros<DadosVazao>(PROCESSO_VAZAO);
+  const pipas = useRegistros<DadosPipas>(PROCESSO_PIPAS, ehDadosPipas);
+  const vazao = useRegistros<DadosVazao>(PROCESSO_VAZAO, ehDadosVazao);
   const carregando = pipas.carregando || vazao.carregando;
   const rp = resumoPipas(pipas.registros);
   const alertas = excedidas(vazao.registros);
   const erro = pipas.erro || vazao.erro;
+  // Processo publicado como formulário no portal abre pela tela do formulário (a definição vem do portal);
+  // a Vazão continua na tela fixa enquanto não tiver versão publicada.
+  const menu = useMenuFormularios();
+  const publicado = (chave: string) => Boolean(menu?.itens.some((f) => f.chave === chave));
+  const abrirVazao = () => (publicado(PROCESSO_VAZAO) ? nav.navigate('FormularioLista', { chave: PROCESSO_VAZAO, nome: 'Vazão de Água Industrial' }) : nav.navigate('VazaoLista'));
+  const abrirPipas = () => nav.navigate('FormularioLista', { chave: PROCESSO_PIPAS, nome: 'Consumo de Água — PIPAS' });
 
   return (
     <ScrollView style={s.tela} contentContainerStyle={s.conteudo} showsVerticalScrollIndicator={false}
@@ -64,12 +71,12 @@ export default function AguaScreen() {
           <Processo icone="gauge" cor={colors.primary} fundo={colors.primarySoft} titulo="Vazão de Água Industrial"
             texto="Leitura dos hidrômetros de cada ponto outorgado. O app calcula volume e vazão e cobra a ação corretiva quando passa do limite."
             numero={`${vazao.registros.length}`} rotulo={vazao.registros.length === 1 ? 'registro' : 'registros'} alerta={alertas ? `${alertas} acima da outorga` : undefined}
-            aoTocar={() => nav.navigate('VazaoLista')} />
+            aoTocar={abrirVazao} />
         </Entrada>
         <Entrada ordem={3}>
           <Processo icone="tanker-truck" cor={colors.greenDeep} fundo={colors.greenSoft} titulo="Consumo de Água — PIPAS"
             texto="Abastecimentos dos caminhões-pipa: data, ponto de captação, volume e código de consumo."
-            numero={`${formatarNumero(rp.volumeMes, 0)} m³`} rotulo="no mês" aoTocar={() => nav.navigate('PipasLista')} />
+            numero={`${formatarNumero(rp.volumeMes, 0)} m³`} rotulo="no mês" aoTocar={abrirPipas} />
         </Entrada>
       </View>
     </ScrollView>
