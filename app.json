@@ -1,0 +1,81 @@
+{
+  "expo": {
+    "name": "UISA ESG",
+    "slug": "uisa-esg",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#FFFFFF",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "enabled": true,
+      "url": "https://dev-uisa-esg-back-nestjs-51741800342.us-east1.run.app/api/v1/updates/manifest",
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0,
+      "requestHeaders": {
+        "x-uisa-environment": "QLD",
+        "expo-channel-name": "QLD"
+      }
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.uisa.esg"
+    },
+    "android": {
+      "package": "com.uisa.esg",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-foreground.png",
+        "backgroundImage": "./assets/adaptive-background.png",
+        "monochromeImage": "./assets/adaptive-foreground.png",
+        "backgroundColor": "#0080B3"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "ACCESS_NETWORK_STATE",
+        "VIBRATE",
+        "USE_BIOMETRIC",
+        "USE_FINGERPRINT"
+      ],
+      "blockedPermissions": [
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/icon.png",
+          "imageWidth": 120,
+          "backgroundColor": "#FFFFFF"
+        }
+      ],
+      "expo-status-bar",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "A biometria do aparelho permite entrar no app ESG sem digitar sua senha."
+        }
+      ],
+      [
+        "expo-secure-store",
+        {
+          "faceIDPermission": "A biometria do aparelho permite entrar no app ESG sem digitar sua senha.",
+          "configureAndroidBackup": true
+        }
+      ]
+    ],
+    "extra": {
+      "apiUrls": {
+        "QLD": "https://dev-uisa-esg-back-nestjs-51741800342.us-east1.run.app"
+      }
+    }
+  }
+}

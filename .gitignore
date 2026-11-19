@@ -1,0 +1,26 @@
+node_modules/
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# android/ e ios/ saem de `npx expo prebuild` na primeira build (docs/04). Se a pasta android/ passar a ter
+# ajuste nativo feito à mão, versione-a e tire esta linha (como no app do Safety).
+/android
+/ios
+
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+
+.metro-health-check*
+npm-debug.*
+*.tsbuildinfo
+.DS_Store
+
+.env
+.env*.local
+dist-ota/
