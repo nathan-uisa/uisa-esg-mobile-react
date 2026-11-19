@@ -68,7 +68,13 @@ export default function LoginScreen({ navigation }: Props) {
             <LinearGradient colors={[...gradients.veuLogin]} style={StyleSheet.absoluteFill} />
             <Entrada><Marca /></Entrada>
             <View style={s.meio}>
-              <Entrada ordem={1}><Text style={[s.titulo, t.titulo]} accessibilityRole="header">O futuro que queremos{'\n'}<Text style={s.destaque}>começa hoje.</Text></Text></Entrada>
+              <Entrada ordem={1}>
+                {/* Duas linhas em Text separados, sem lineHeight: com Text aninhado o Android cortava o ç e o j da última linha. */}
+                <View accessible accessibilityRole="header" accessibilityLabel="O futuro que queremos começa hoje.">
+                  <Text style={[s.titulo, t.titulo]}>O futuro que queremos</Text>
+                  <Text style={[s.titulo, t.titulo, s.destaque]}>começa hoje.</Text>
+                </View>
+              </Entrada>
               <Entrada ordem={2}><Text style={[s.subtitulo, t.corpo]}>Entre com sua matrícula, login ou e-mail.</Text></Entrada>
               <Entrada ordem={3} style={s.campos}>
                 <View style={[s.campo, tentou && !identificador.trim() && s.campoErro]}>
@@ -158,8 +164,8 @@ const s = StyleSheet.create({
   painel: { minHeight: 600, paddingHorizontal: 26, paddingBottom: 86, overflow: 'visible' },
   meio: { flex: 1, justifyContent: 'center', paddingVertical: space.xl },
   destaque: { color: colors.destaque },
-  // Folga embaixo: sem ela o Android corta o ç e o j da última linha.
-  titulo: { fontSize: 33, lineHeight: 46, paddingBottom: 8, fontWeight: '700', color: colors.white, includeFontPadding: true },
+  // A folga contra o corte do ç e do j vem de useTipografia().titulo.
+  titulo: { fontSize: 33, fontWeight: '700', color: colors.white, includeFontPadding: true },
   subtitulo: { fontSize: 16, lineHeight: 23, color: colors.onDarkMuted, marginTop: 12 },
   campos: { marginTop: 28, gap: 12 },
   campo: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 60, paddingHorizontal: 22, borderRadius: radius.pill, backgroundColor: colors.glass, borderWidth: 1.5, borderColor: colors.glassBorder },

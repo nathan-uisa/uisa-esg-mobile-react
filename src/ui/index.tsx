@@ -28,11 +28,15 @@ export function useMenosMovimento() {
   return menos;
 }
 
-/** Fontes da marca quando carregadas; senão a do sistema com o mesmo peso. */
+/**
+ * Fontes da marca quando carregadas; senão a do sistema com o mesmo peso.
+ * A fonte dos títulos (Kobenhavn Sans) desenha g, j, ç e p abaixo da descida que ela declara, e o Android corta o que
+ * passa da caixa do texto. Por isso o título não usa lineHeight fixo (a altura vem da fonte) e ganha folga embaixo.
+ */
 export function useTipografia() {
   const { carregadas } = useFontes();
   return {
-    titulo: carregadas ? { fontFamily: brandFontFamily.heading, fontWeight: 'normal' as const } : null,
+    titulo: carregadas ? { fontFamily: brandFontFamily.heading, fontWeight: 'normal' as const, lineHeight: undefined, paddingBottom: 6 } : null,
     corpo: carregadas ? { fontFamily: brandFontFamily.body } : null,
     medio: carregadas ? { fontFamily: brandFontFamily.medium, fontWeight: 'normal' as const } : null,
   };

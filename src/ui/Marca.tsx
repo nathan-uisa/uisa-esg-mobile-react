@@ -9,7 +9,7 @@ export function Marca({ tamanho = 26 }: { tamanho?: number }) {
   return (
     <View style={s.linha} accessible accessibilityLabel="uisa esg">
       <Image source={require('../../assets/brand/uisa-logo-branca.png')} style={{ width: tamanho * 3.7, height: tamanho * 0.78 }} resizeMode="contain" />
-      <Text style={[s.esg, t.titulo, { fontSize: tamanho, paddingVertical: tamanho * 0.3, paddingHorizontal: tamanho * 0.15, marginLeft: -tamanho * 0.15 }]}>
+      <Text style={[s.esg, t.titulo, { fontSize: tamanho, paddingTop: tamanho * 0.3, paddingBottom: tamanho * 0.3, paddingHorizontal: tamanho * 0.15, marginLeft: -tamanho * 0.15 }]}>
         <Text style={{ color: colors.green }}>e</Text>
         <Text style={{ color: colors.cyan }}>s</Text>
         <Text style={{ color: colors.accent }}>g</Text>

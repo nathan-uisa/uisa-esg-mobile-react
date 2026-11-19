@@ -22,7 +22,8 @@ do `.gitignore`. A partir daí, não rode `prebuild` de novo: ele apagaria os aj
 1. Mude o código JS/TS ou as imagens. Mudança nativa (dependência nova, permissão, plugin, ícone) **não** vai por
    OTA: exige APK novo.
 2. Gere o pacote: `npm run ota:package:qld -- --notes "o que muda"`. O resultado é
-   `dist-ota/uisa-esg-ota-qld-v<versão>-<data>.zip`.
+   `dist-ota/uisa-esg-ota-qld-v<versão>-<data>.zip`. O script roda o `expo export --clear`: sem o `--clear`, o cache do Metro
+   já gerou pacote com código antigo no CapacitaApp.
 3. No portal, em **Administração → App ESG**, escolha o canal, envie o .zip e publique. É preciso a permissão
    "Publicar e desfazer atualizações do app".
 4. Os aparelhos do canal **com o APK da mesma versão** baixam o pacote ao abrir o app ou ao voltar a ele. O pacote é
