@@ -5,6 +5,7 @@ import { ApiError, definirAoExpirarSessao, request, setToken, tokenAtual } from 
 import { salvarAmbiente, type Ambiente } from './ambiente';
 import { apagarBiometriaLocal, ativarDigital as ativarNoServidor, desativarDigital as desativarNoServidor, digitalDisponivel, entrarComDigital, lerBiometria } from './biometria';
 import { apagarPin, temPin as haPin } from './desbloqueio';
+import { apagarCaches } from './cacheRegistros';
 import { expirouNaAbertura, marcarAtividade, observarInatividade } from './inatividade';
 
 /** Usuário como o backend devolve em /auth/login e /auth/me. */
@@ -92,6 +93,7 @@ export function SessaoProvider({ children }: { children: React.ReactNode }) {
     await setToken(null);
     await AsyncStorage.removeItem(USUARIO);
     await apagarPin();
+    await apagarCaches();
     setGeracao((g) => g + 1);
     setBloqueado(false);
     setUsuario(null);
@@ -189,6 +191,7 @@ export function SessaoProvider({ children }: { children: React.ReactNode }) {
     await setToken(null);
     await AsyncStorage.removeItem(USUARIO);
     await apagarBiometriaLocal();
+    await apagarCaches();
     await salvarAmbiente(novo);
     setUsuario(null);
     await atualizarAcessoRapido();

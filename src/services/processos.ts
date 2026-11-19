@@ -1,6 +1,8 @@
 import * as Crypto from 'expo-crypto';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, request } from './api';
+import { acrescentarAoCache, DIAS_NO_APARELHO, lerCache, salvarCache } from './cacheRegistros';
+import { formatarDataHora } from '../agua/numeros';
 
 /**
  * Registros de um processo do Portal ESG (`/api/v1/processos/:processo/registros`, tabela `esg_processos_registros`).
@@ -12,14 +14,19 @@ export type Registro<D> = { id: string; numero: number; criadoEm: string; elabor
 const ouvintes = new Map<string, Set<(r: Registro<unknown>) => void>>();
 function avisar(processo: string, r: Registro<unknown>) { ouvintes.get(processo)?.forEach((f) => f(r)); }
 
+/** Sem resposta do servidor (rede, tempo esgotado, 5xx): aí vale mostrar a cópia do aparelho. Erro 4xx é regra e não. */
+const semServidor = (e: unknown) => !(e instanceof ApiError) || e.status === 0 || e.status >= 500;
+
 /**
- * Lista e grava. Um envio por vez e uma `chaveEnvio` por envio: se a rede cair no meio e a pessoa tocar de novo com
+ * Lista e grava. A lista vem do servidor; sem resposta dele, vem da cópia dos últimos 30 dias guardada no aparelho
+ * (`cacheRegistros.ts`) e `doAparelho` fica verdadeiro. Um envio por vez e uma `chaveEnvio` por envio: se a rede cair no meio e a pessoa tocar de novo com
  * os mesmos dados, vai a mesma chave e o servidor devolve o que já tinha gravado (não duplica).
  */
 export function useRegistros<D>(processo: string) {
   const [registros, setRegistros] = useState<Registro<D>[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState('');
+  const [doAparelho, setDoAparelho] = useState(false);
   const emVoo = useRef<Promise<Registro<D>> | null>(null);
   const tentativa = useRef<{ json: string; chave: string } | null>(null);
 
@@ -28,9 +35,20 @@ export function useRegistros<D>(processo: string) {
     setErro('');
     try {
       const r = await request<{ registros?: Registro<D>[] }>(`/processos/${encodeURIComponent(processo)}/registros`);
-      setRegistros(Array.isArray(r.registros) ? r.registros : []);
+      const lista = Array.isArray(r.registros) ? r.registros : [];
+      setRegistros(lista);
+      setDoAparelho(false);
+      void salvarCache(processo, lista);
     } catch (e) {
-      setErro(e instanceof ApiError ? e.message : 'Não foi possível carregar os registros.');
+      const copia = semServidor(e) ? await lerCache<Registro<D>>(processo) : null;
+      if (copia) {
+        setRegistros(copia.registros);
+        setDoAparelho(true);
+        setErro(`Sem conexão com o servidor. Mostrando o que este aparelho guardou dos últimos ${DIAS_NO_APARELHO} dias (atualizado em ${formatarDataHora(copia.guardadoEm)}).`);
+      } else {
+        setDoAparelho(false);
+        setErro(e instanceof ApiError ? e.message : 'Não foi possível carregar os registros.');
+      }
     } finally {
       setCarregando(false);
     }
@@ -54,6 +72,7 @@ export function useRegistros<D>(processo: string) {
         method: 'POST', body: { dados, chaveEnvio: tentativa.current.chave }, timeoutMs: 25_000,
       });
       tentativa.current = null;
+      void acrescentarAoCache(processo, novo);
       avisar(processo, novo as Registro<unknown>);
       return novo;
     })();
@@ -62,5 +81,5 @@ export function useRegistros<D>(processo: string) {
     return envio;
   }, [processo]);
 
-  return { registros, carregando, erro, recarregar, registrar };
+  return { registros, carregando, erro, doAparelho, recarregar, registrar };
 }

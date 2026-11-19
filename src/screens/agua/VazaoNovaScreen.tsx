@@ -9,7 +9,7 @@ import {
 } from '../../agua/vazao';
 import { useRegistros } from '../../services/processos';
 import { colors, radius, type } from '../../theme';
-import { Aviso, Botao, Campo, Carregando, Cartao, Entrada, Escolhas, Nivel, Rotulo, Tela, useTipografia } from '../../ui';
+import { Aviso, Botao, Campo, Carregando, Cartao, Entrada, Escolhas, Nivel, Rotulo, Tela, useTipografia, Vazio } from '../../ui';
 import { SeletorData } from '../../ui/SeletorData';
 import type { Rotas } from '../../navigation/tipos';
 
@@ -17,7 +17,8 @@ type Props = NativeStackScreenProps<Rotas, 'VazaoNova'>;
 
 /** Nova leitura: um cartão por ponto outorgado. Volume e vazão saem da leitura anterior do mesmo hidrômetro. */
 export default function VazaoNovaScreen({ navigation }: Props) {
-  const { registros, carregando, registrar } = useRegistros<DadosVazao>(PROCESSO_VAZAO);
+  const { registros, carregando, erro: erroLista, doAparelho, recarregar, registrar } = useRegistros<DadosVazao>(PROCESSO_VAZAO);
+  const semHistorico = Boolean(erroLista) && !doAparelho;
   const hoje = hojeIso();
   const [pontos, setPontos] = useState<Rascunho[]>(() => PONTOS.map((p) => rascunhoVazio(p.id, hoje)));
   const [tentou, setTentou] = useState(false);
@@ -26,10 +27,10 @@ export default function VazaoNovaScreen({ navigation }: Props) {
 
   // Com o histórico carregado, cada ponto já vem com o hidrômetro lido da última vez.
   useEffect(() => {
-    if (carregando || preparado.current) return;
+    if (carregando || preparado.current || semHistorico) return;
     preparado.current = true;
     setPontos((l) => l.map((r) => (r.hidrometro ? r : { ...r, hidrometro: hidrometroRecente(registros, r.ponto) })));
-  }, [carregando, registros]);
+  }, [carregando, registros, semHistorico]);
 
   const mudar = (id: string, x: Partial<Rascunho>) => setPontos((l) => l.map((r) => (r.ponto === id ? { ...r, ...x } : r)));
   const calculos = pontos.map((r) => calcular(r, registros, hoje));
@@ -48,11 +49,22 @@ export default function VazaoNovaScreen({ navigation }: Props) {
     } finally { setEnviando(false); }
   }
 
+  // Sem servidor e sem cópia no aparelho: não fingir que não há leitura anterior (a pessoa digitaria à mão sem precisar).
+  if (!carregando && semHistorico && !preparado.current) {
+    return (
+      <Tela titulo="Nova leitura" descricao="Vazão de Água Industrial">
+        <Vazio icone="cloud-offline-outline" titulo="Sem as leituras anteriores" texto={`${erroLista} Sem elas não dá para calcular volume e vazão. Este aparelho ainda não tem leituras guardadas.`}
+          acao={<Botao icone="refresh" rotulo="Tentar de novo" aoTocar={() => void recarregar()} />} />
+      </Tela>
+    );
+  }
+
   if (carregando && !preparado.current) return <Tela titulo="Nova leitura" descricao="Vazão de Água Industrial"><Carregando texto="Buscando as leituras anteriores…" /></Tela>;
 
   return (
     <Tela titulo="Nova leitura" descricao={`Vazão de Água Industrial · ${proximo}`}
       rodape={<Botao tom="principal" icone="checkmark" rotulo="Registrar leituras" ocupado={enviando} aoTocar={enviar} />}>
+      {doAparelho ? <Aviso icone="cloud-offline-outline" tom="laranja">{`${erroLista} Leitura anterior com mais de 30 dias não está no aparelho: informe-a à mão. O registro só é enviado com internet.`}</Aviso> : null}
       <Aviso icone="information-circle-outline">Leia o visor do hidrômetro de cada ponto. Ponto que não foi lido hoje: toque em “Não lido”.</Aviso>
       {pontos.map((r, i) => <Entrada key={r.ponto} ordem={i}><CartaoPonto r={r} c={calculos[i]} hoje={hoje} tentou={tentou} mudar={(x) => mudar(r.ponto, x)} /></Entrada>)}
       {tentou && faltas.length ? <Aviso icone="alert-circle-outline" tom="vermelho">Falta: {faltas.join(' · ')}</Aviso> : null}
