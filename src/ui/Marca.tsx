@@ -9,7 +9,7 @@ export function Marca({ tamanho = 26 }: { tamanho?: number }) {
   return (
     <View style={s.linha} accessible accessibilityLabel="uisa esg">
       <Image source={require('../../assets/brand/uisa-logo-branca.png')} style={{ width: tamanho * 3.7, height: tamanho * 0.78 }} resizeMode="contain" />
-      <Text style={[s.esg, t.titulo, { fontSize: tamanho, lineHeight: tamanho * 1.3 }]}>
+      <Text style={[s.esg, t.titulo, { fontSize: tamanho, lineHeight: tamanho * 1.5, paddingBottom: tamanho * 0.2, paddingRight: tamanho * 0.08 }]}>
         <Text style={{ color: colors.green }}>e</Text>
         <Text style={{ color: colors.cyan }}>s</Text>
         <Text style={{ color: colors.accent }}>g</Text>
@@ -20,5 +20,6 @@ export function Marca({ tamanho = 26 }: { tamanho?: number }) {
 
 const s = StyleSheet.create({
   linha: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  esg: { fontWeight: '700', includeFontPadding: true, marginBottom: 2 },
+  // Folga embaixo e à direita: sem ela o Android corta a perna do g.
+  esg: { fontWeight: '700', includeFontPadding: true },
 });

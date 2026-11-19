@@ -2,11 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, ImageBackground, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import * as Application from 'expo-application';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { expo } from '../../app.json';
-import { AMBIENTES, nomeDoAmbiente, useAmbiente, type Ambiente } from '../services/ambiente';
+import { AMBIENTES, useAmbiente, type Ambiente } from '../services/ambiente';
 import { LoginError, useSessao } from '../services/sessao';
 import { colors, gradients, radius, shadow, space, type } from '../theme';
 import { CampoSenha } from '../ui/CampoSenha';
@@ -26,7 +24,6 @@ export default function LoginScreen({ navigation }: Props) {
   const { login, loginDigital, digitalAtiva, digitalNoAparelho, aviso } = useSessao();
   const t = useTipografia();
   const insets = useSafeAreaInsets();
-  const ambiente = useAmbiente();
   const senhaRef = useRef<TextInput>(null);
   const [identificador, setIdentificador] = useState('');
   const [senha, setSenha] = useState('');
@@ -63,7 +60,6 @@ export default function LoginScreen({ navigation }: Props) {
     finally { setOcupado(''); }
   }
 
-  const versao = Application.nativeApplicationVersion ?? expo.version;
   return (
     <View style={s.tela}>
       <KeyboardAvoidingView style={s.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -72,7 +68,7 @@ export default function LoginScreen({ navigation }: Props) {
             <LinearGradient colors={[...gradients.veuLogin]} style={StyleSheet.absoluteFill} />
             <Entrada><Marca /></Entrada>
             <View style={s.meio}>
-              <Entrada ordem={1}><Text style={[s.titulo, t.titulo]} accessibilityRole="header">Cuidar da água{'\n'}começa aqui.</Text></Entrada>
+              <Entrada ordem={1}><Text style={[s.titulo, t.titulo]} accessibilityRole="header">O futuro que queremos{'\n'}<Text style={s.destaque}>começa hoje.</Text></Text></Entrada>
               <Entrada ordem={2}><Text style={[s.subtitulo, t.corpo]}>Entre com sua matrícula, login ou e-mail.</Text></Entrada>
               <Entrada ordem={3} style={s.campos}>
                 <View style={[s.campo, tentou && !identificador.trim() && s.campoErro]}>
@@ -108,14 +104,9 @@ export default function LoginScreen({ navigation }: Props) {
           </View>
 
           <View style={[s.rodape, { paddingBottom: insets.bottom + space.md }]}>
-            <Text style={s.lema}>Cuidar do amanhã começa hoje.</Text>
-            <View style={s.ajustes}>
-              {ambiente !== 'PRD' ? <Text style={s.ambiente}>{nomeDoAmbiente(ambiente)}</Text> : null}
-              <Text style={s.versao}>v{versao}</Text>
-              <Pressable accessibilityRole="button" accessibilityLabel="Servidor e atualizações do aplicativo" onPress={() => setAjustes(true)} style={({ pressed }) => [s.engrenagem, pressed && { backgroundColor: colors.surfacePressed }]}>
-                <Ionicons name="settings-outline" size={22} color={colors.textMuted} accessible={false} />
-              </Pressable>
-            </View>
+            <Pressable accessibilityRole="button" accessibilityLabel="Servidor e atualizações do aplicativo" onPress={() => setAjustes(true)} style={({ pressed }) => [s.engrenagem, pressed && { backgroundColor: colors.surfacePressed }]}>
+              <Ionicons name="settings-outline" size={22} color={colors.textMuted} accessible={false} />
+            </Pressable>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -166,6 +157,7 @@ const s = StyleSheet.create({
   // A borda de baixo é a onda (não um canto arredondado); `visible` deixa o botão de entrar atravessá-la.
   painel: { minHeight: 600, paddingHorizontal: 26, paddingBottom: 86, overflow: 'visible' },
   meio: { flex: 1, justifyContent: 'center', paddingVertical: space.xl },
+  destaque: { color: colors.destaque },
   titulo: { fontSize: 33, lineHeight: 43, fontWeight: '700', color: colors.white, includeFontPadding: true },
   subtitulo: { fontSize: 16, lineHeight: 23, color: colors.onDarkMuted, marginTop: 12 },
   campos: { marginTop: 28, gap: 12 },
@@ -181,11 +173,7 @@ const s = StyleSheet.create({
   entrarRotulo: { fontSize: 14, color: colors.textMuted },
   digital: { flexDirection: 'row', alignItems: 'center', gap: 10, height: 52, paddingHorizontal: 22, borderRadius: radius.pill, backgroundColor: colors.primarySoft },
   digitalTexto: { fontSize: 15.5, fontWeight: '600', color: colors.primary },
-  rodape: { marginTop: 'auto', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 22, paddingTop: space.lg },
-  lema: { flexShrink: 1, fontSize: 12.5, color: colors.greenInk, fontWeight: '600' },
-  ajustes: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  ambiente: { fontSize: 11, fontWeight: '700', color: colors.white, backgroundColor: colors.warning, paddingHorizontal: 7, paddingVertical: 1, borderRadius: 7, overflow: 'hidden' },
-  versao: { fontSize: 12, color: colors.textMuted },
+  rodape: { marginTop: 'auto', alignItems: 'center', paddingHorizontal: 22, paddingTop: space.lg },
   engrenagem: { width: 48, height: 48, borderRadius: 24, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' },
   veu: { flex: 1, backgroundColor: colors.veil, justifyContent: 'flex-end' },
   folha: { backgroundColor: colors.white, borderTopLeftRadius: radius.hero, borderTopRightRadius: radius.hero, padding: 24, paddingBottom: 36, gap: 12, ...shadow.float },

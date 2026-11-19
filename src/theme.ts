@@ -31,6 +31,7 @@ export const colors = {
   green: VERDE,
   greenDeep: VERDE_UISA,
   greenSoft: '#EDF7E9',
+  destaque: '#9BF97B', // "começa hoje." do login, o mesmo verde-claro do portal
   greenInk: '#3F8A2B',
 
   accent: '#F58220',

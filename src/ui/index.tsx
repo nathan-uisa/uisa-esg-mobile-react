@@ -310,8 +310,8 @@ const s = StyleSheet.create({
   redondo: { width: size.back, height: size.back, borderRadius: size.back / 2, alignItems: 'center', justifyContent: 'center' },
   redondoVidro: { borderWidth: 1, borderColor: colors.glassBorder },
 
-  painelFoto: { borderBottomLeftRadius: radius.panel, borderBottomRightRadius: radius.panel, overflow: 'hidden', justifyContent: 'flex-end' },
-  painelImagem: { borderBottomLeftRadius: radius.panel, borderBottomRightRadius: radius.panel },
+  painelFoto: { overflow: 'hidden', justifyContent: 'flex-end' },
+  painelImagem: {},
   painelConteudo: { flex: 1, paddingHorizontal: 22, paddingBottom: 48, justifyContent: 'space-between' },
 
   botao: { minHeight: size.cta, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 },

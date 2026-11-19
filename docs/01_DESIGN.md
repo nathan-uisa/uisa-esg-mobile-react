@@ -16,7 +16,7 @@ As cores são as oficiais do portal (`palette.css`):
 
 ## Formas e movimento
 
-- **Cantos arredondados em tudo:** cartões com raio 28, painéis 44 e campos e botões em pílula.
+- **Cantos arredondados em tudo:** cartões com raio 28, campos e botões em pílula. A foto do topo tem cantos retos: quem arredonda a borda de baixo é a onda (com canto curvo, a onda deixava a ponta da foto aparecendo).
 - **Onda (`src/ui/Onda.tsx`):** a borda de baixo dos painéis de foto é uma onda dupla que desliza devagar. Ela é a
   marca visual do app.
 - **Entrada (`Entrada`):** cada bloco entra subindo e aparecendo; as listas chegam em cascata.
@@ -38,15 +38,15 @@ reduzidas para 1280 px em `assets/imagens/`:
 | `objetivos-metas.jpg` | PIPAS | Canavial |
 | `araras.jpg` | Perfil | Araras (a foto do login do portal) |
 
-O ícone do app sai do `icon_app_esg.svg` oficial (folha branca no degradê ciano → azul), renderizado em
+O ícone do app sai do `uisa_esg_icon_app.svg` oficial (folha branca com o símbolo da uisa no degradê ciano → azul), renderizado em
 `assets/icon.png` e nos dois PNGs do ícone adaptativo do Android. A logo branca da uisa está em
 `assets/brand/uisa-logo-branca.png`.
 
 ## Telas
 
-- **Login:** foto do rio com véu azul, a marca "uisa **e**s**g**", campos de vidro e o botão de entrar num círculo
-  laranja que atravessa a onda. Embaixo ficam "Usar a digital" (quando ativada) e a engrenagem (servidor e
-  atualizações).
+- **Login:** foto do rio com véu azul, a marca "uisa **e**s**g**", a mesma frase do portal ("O futuro que queremos / **começa hoje.**", o destaque no verde-claro do portal), campos de vidro e o botão de entrar num círculo
+  laranja que atravessa a onda. Embaixo ficam "Usar a digital" (quando ativada) e só a engrenagem, centralizada (servidor e
+  atualizações; a versão e o servidor em uso aparecem lá dentro, não no rodapé).
 - **Início e Perfil:** abas em pílula flutuante, só nessas duas telas. Dentro de um fluxo, a tela é inteira da tarefa.
 - **Telas internas:** voltar redondo de 48 à esquerda, título e descrição, como o `CabecalhoTela` do Safety. Rodapé
   arredondado com a ação principal.
