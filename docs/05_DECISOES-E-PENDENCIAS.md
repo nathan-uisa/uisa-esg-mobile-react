@@ -10,6 +10,8 @@
   - o token fica sempre no cofre do aparelho, e a tela de bloqueio é quem o protege;
   - a trava do aparelho ou o PIN do app liberam sem internet;
   - a **digital no login** usa a credencial do servidor (30 dias), que funciona mesmo depois de a sessão de 8 h vencer.
+- **Leituras dos últimos 30 dias no aparelho** (19/11/2026, pedido): sem internet as listas e a leitura anterior da
+  Vazão continuam aparecendo. Mais de 30 dias sai só do aparelho. Detalhe no doc 03.
 - **Sem segundo plano nem fila offline:** o app só registra com internet. Se a captação no campo ficar sem sinal,
   falta portar a fila (`outbox`) do Safety.
 - **Sem calendário nativo:** a data usa setas e Hoje/Ontem, sem dependência a mais.

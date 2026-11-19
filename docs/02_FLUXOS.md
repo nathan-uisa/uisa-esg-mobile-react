@@ -59,5 +59,6 @@ Permissão `agua.view` (o papel no portal). Sem ela, o Início mostra que o mód
   - o registro aparece no portal na hora.
 - **Data:** sem calendário nativo. Há setas de dia anterior e seguinte e atalhos Hoje e Ontem, e nunca passa de hoje.
 
-O app **não guarda registros offline**: sem internet, o envio falha com a mensagem e o formulário continua preenchido.
-Ver o doc 05.
+**Sem internet:** as listas e a leitura anterior vêm da cópia dos últimos 30 dias guardada no aparelho (doc 03,
+"Cache de registros"), com um aviso. O **envio** ainda exige internet: falha com a mensagem e o formulário continua
+preenchido. Ver o doc 05.

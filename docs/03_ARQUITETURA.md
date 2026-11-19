@@ -12,6 +12,7 @@ src/services/
   inatividade.ts             5 min sem uso (toque ou teclado), salvo no aparelho
   atualizacoes.ts            Expo Updates: procura ao abrir e ao voltar, aplica só em tela de chegada
   processos.ts               useRegistros: lista/grava /processos/:id/registros com chaveEnvio
+  cacheRegistros.ts          Cópia dos registros dos últimos 30 dias no aparelho (usada sem servidor)
 src/agua/                    Regras puras (sem React): numeros.ts, pipas.ts, vazao.ts — testadas em scripts/verify-agua.cjs
 src/ui/                      Peças: Tela, PainelFoto, Onda, Botao, Campo, Escolhas, Nivel, Contador, SeletorData, TecladoPin…
 src/screens/                 Login, PrimeiroAcesso, Inicio, Perfil, DefinirPin, Atualizacoes, Bloqueio, agua/*
@@ -25,7 +26,23 @@ src/screens/                 Login, PrimeiroAcesso, Inicio, Perfil, DefinirPin, 
 - **credencial da digital**: no cofre com digital (`com.uisa.esg.biometria`); só metadados no AsyncStorage
   (`esg.biometria`);
 - **PIN**: resumo com sal no cofre (`com.uisa.esg.desbloqueio`);
-- **servidor escolhido**: AsyncStorage (`esg.ambiente`).
+- **servidor escolhido**: AsyncStorage (`esg.ambiente`);
+- **registros dos últimos 30 dias** de cada processo: AsyncStorage (`esg.cache.registros.<servidor>.<processo>`).
+
+## Cache de registros (19/11/2026)
+
+Pedido: sem internet, as leituras anteriores da Vazão têm de aparecer.
+
+- **Fonte:** o servidor, sempre. Toda busca bem-sucedida regrava a cópia, e todo registro gravado pelo app entra nela.
+- **Quando a cópia é usada:** só quando o servidor não responde (sem rede, tempo esgotado ou erro 5xx). Erro de regra
+  (4xx, como sem permissão) não mostra a cópia. A tela avisa que os dados vêm do aparelho e de quando são.
+- **30 dias:** pela data em que o servidor gravou o registro (`criadoEm`). Mais velho que isso sai **só da cópia**,
+  ao ler ou gravar; no servidor continua tudo. Prazo em `DIAS_NO_APARELHO`.
+- **Apagada:** ao sair da conta e ao trocar de servidor (uma cópia por servidor). O bloqueio de 5 min não apaga.
+- **Nova leitura sem internet:** com cópia, a leitura anterior vem dela; se a última leitura do hidrômetro tem mais de
+  30 dias, a pessoa a informa à mão. Sem cópia, a tela diz que não conseguiu buscar o histórico e oferece tentar de
+  novo, em vez de parecer que o hidrômetro não tem leitura. O envio continua exigindo internet (não há fila).
+- Vale para os dois processos (PIPAS e Vazão), porque é o mesmo `useRegistros`.
 
 **Sessão:**
 
