@@ -45,7 +45,7 @@ function main() {
 
   console.log(`OTA do app ESG · canal ${args.canal} · ${args.plataforma} · versão ${versao} · runtime ${runtimeVersion}`);
   console.log('\n[1/3] npx expo export…');
-  execSync(`npx expo export --platform ${args.plataforma} --output-dir "${pasta}"`, { cwd: raiz, stdio: 'inherit', env: { ...process.env, OTA_ENVIRONMENT: args.canal } });
+  execSync(`npx expo export --clear --platform ${args.plataforma} --output-dir "${pasta}"`, { cwd: raiz, stdio: 'inherit', env: { ...process.env, OTA_ENVIRONMENT: args.canal } });
 
   console.log('\n[2/3] Descritor uisa-esg-update.json…');
   fs.writeFileSync(path.join(pasta, 'uisa-esg-update.json'), JSON.stringify({

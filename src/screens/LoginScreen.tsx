@@ -158,7 +158,8 @@ const s = StyleSheet.create({
   painel: { minHeight: 600, paddingHorizontal: 26, paddingBottom: 86, overflow: 'visible' },
   meio: { flex: 1, justifyContent: 'center', paddingVertical: space.xl },
   destaque: { color: colors.destaque },
-  titulo: { fontSize: 33, lineHeight: 43, fontWeight: '700', color: colors.white, includeFontPadding: true },
+  // Folga embaixo: sem ela o Android corta o ç e o j da última linha.
+  titulo: { fontSize: 33, lineHeight: 46, paddingBottom: 8, fontWeight: '700', color: colors.white, includeFontPadding: true },
   subtitulo: { fontSize: 16, lineHeight: 23, color: colors.onDarkMuted, marginTop: 12 },
   campos: { marginTop: 28, gap: 12 },
   campo: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 60, paddingHorizontal: 22, borderRadius: radius.pill, backgroundColor: colors.glass, borderWidth: 1.5, borderColor: colors.glassBorder },
