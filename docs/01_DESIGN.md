@@ -39,7 +39,7 @@ reduzidas para 1280 px em `assets/imagens/`:
 | `araras.jpg` | Perfil | Araras (a foto do login do portal) |
 
 O ícone do app sai do `uisa_esg_icon_app.svg` oficial (folha branca com o símbolo da uisa no degradê ciano → azul), renderizado em
-`assets/icon.png` e nos dois PNGs do ícone adaptativo do Android. A logo branca da uisa está em
+`assets/icon.png` e nos dois PNGs do ícone adaptativo do Android. A proporção segue o CapacitaApp e o UISA Vendas: quadrado com cantos arredondados (transparentes), símbolo com ~50% da largura e centrado. No adaptativo, o símbolo ocupa ~50% da parte visível (o Android mostra só os 66,7% do meio da camada). A logo branca da uisa está em
 `assets/brand/uisa-logo-branca.png`.
 
 ## Telas
